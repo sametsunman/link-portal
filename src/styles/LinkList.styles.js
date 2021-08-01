@@ -4,13 +4,13 @@ export const Tr = styled.tr`
   :hover {
     background-color: lightgreen;
   }
-  :hover > td > span> span{
+  :hover > td > span{
     display: unset;
   },
 `;
 
 export const Td = styled.td`
-  min-width: 100px
+  min-width: 125px
 `;
 
 export const Button = styled.span`
@@ -30,3 +30,11 @@ export const ToastContainer = styled.div`
   right: 5px;
 `;
 
+export const ConnectionLink = styled.a`
+  text-decoration: none;
+  :hover > span {
+    fontSize: smaller;
+    paddingLeft: 5px;
+    display: unset!important;
+  },
+`;
