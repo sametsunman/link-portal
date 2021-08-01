@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Toast, Table, Pagination } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp, faThumbsDown, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Tr,Td, Button,ToastContainer, RemoveCol } from './../styles/LinkList.styles';
 
 
 const LinkList = () => {
 
     const dispatch = useDispatch();
     const [page, setPage] = useState(0);
+    const [toastShow, setToastShow] = useState(false);
     const { links } = useSelector((state) => state);
 
 
@@ -15,51 +20,62 @@ const LinkList = () => {
 
     const removeItem = (id) => {
         dispatch({ type: 'REMOVE_LINK', payload: id });
+        setToastShow(true);
     }
 
 
     const Paging = () => {
         let pages = [];
-        for (var i = 0; i < links.length/5; i++) {
-            let page = i;
-            pages.push(<div onClick={()=>setPage(page)}>{page+1}</div>)
+        for (let i = 0; i < links.length / 5; i++) {
+            let currentPage = i;
+            pages.push(<Pagination.Item key={currentPage} active={currentPage === page} onClick={() => {
+                setPage(currentPage);
+            }}>
+                {currentPage + 1}
+            </Pagination.Item>)
         }
-        return <div>{pages}</div>
+        return pages
     }
 
 
     return (
         <div>
-            <table>
+            <Table striped bordered hover size="sm">
                 <tr>
                     <th>Bağlantı Adı</th>
                     <th>Bağlantı Adresi</th>
                     <th>Puan</th>
-                    <th>İşlemler</th>
+                    <th>Oyla</th>
                 </tr>
-                {links.sort((a, b) => b.vote - a.vote)
-                    .sort((a, b) =>  new Date(b.updatedDate) - new Date(a.updatedDate))
+                {links
+                    .sort((a, b) => new Date(b.updatedDate) - new Date(a.updatedDate))
+                    .sort((a, b) => b.vote - a.vote)
                     .slice(page * 5, (page + 1) * 5)
                     .map(item => {
-                    return <tr>
-                        <td>
-                            {item.name}
-                        </td>
-                        <td>
-                            {item.link}
-                        </td>
-                        <td>
-                            {item.vote}
-                        </td>
-                        <td>
-                            <span onClick={() => voteItem(item.id, 1)}>Up</span>
-                            <span onClick={() => voteItem(item.id, -1)}>Down</span>
-                            <span onClick={() => removeItem(item.id)}>Remove</span>
-                        </td>
-                    </tr>
-                })}
-            </table>
-            <Paging />
+                        return <Tr>
+                            <Td>
+                                {item.name}
+                            </Td>
+                            <Td>
+                                {item.link}
+                            </Td>
+                            <Td>
+                                {item.vote}
+                            </Td>
+                            <Td>
+                                <Button><span onClick={() => voteItem(item.id, -1)}><FontAwesomeIcon icon={faThumbsDown} color='orange' /></span></Button>
+                                <Button><span onClick={() => voteItem(item.id, 1)}><FontAwesomeIcon icon={faThumbsUp} color='blue' /></span></Button>
+                                <Button><RemoveCol onClick={() => removeItem(item.id)}><FontAwesomeIcon icon={faTrash} color='red' /></RemoveCol></Button>
+                            </Td>
+                        </Tr>
+                    })}
+            </Table>
+            <Pagination size='sm'><Paging /></Pagination>
+            <ToastContainer>
+            <Toast onClose={() => setToastShow(false)} show={toastShow} delay={3000} bg='success'  position='top-end' autohide>
+                <Toast.Body className='text-white'>Bağlantı başarıyla silindi.</Toast.Body>
+            </Toast>
+            </ToastContainer>
         </div>
     )
 }

@@ -7,7 +7,7 @@ import { Wrapper, Title, Menu } from './index.styles';
 const Header = () => {
   return (
     <Wrapper>
-      <Title>Bağlantı Portalı</Title>
+      <Link to="/"><Title>Bağlantı Portalı</Title></Link>
       <Menu>
         {routes
           .map((route) => (
